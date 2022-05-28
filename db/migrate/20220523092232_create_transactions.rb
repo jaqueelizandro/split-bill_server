@@ -6,8 +6,8 @@ class CreateTransactions < ActiveRecord::Migration[5.2]
       t.integer :amount
       t.datetime :date
       t.text :image
-      t.uuid :group_id
-      t.integer :member_id
+      t.references :group, index: true, foreign_key: true, type: :uuid
+      t.references :member, index: true, foreign_key: true
 
       t.timestamps
     end

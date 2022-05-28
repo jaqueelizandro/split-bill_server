@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_23_092232) do
+ActiveRecord::Schema.define(version: 2022_05_27_010507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -25,9 +25,19 @@ ActiveRecord::Schema.define(version: 2022_05_23_092232) do
   create_table "members", force: :cascade do |t|
     t.text "name"
     t.text "email"
+    t.uuid "group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "group_id"
+    t.index ["group_id"], name: "index_members_on_group_id"
+  end
+
+  create_table "settles", force: :cascade do |t|
+    t.bigint "transaction_id"
+    t.bigint "paid_for_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["paid_for_id"], name: "index_settles_on_paid_for_id"
+    t.index ["transaction_id"], name: "index_settles_on_transaction_id"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -37,9 +47,16 @@ ActiveRecord::Schema.define(version: 2022_05_23_092232) do
     t.datetime "date"
     t.text "image"
     t.uuid "group_id"
-    t.integer "member_id"
+    t.bigint "member_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_transactions_on_group_id"
+    t.index ["member_id"], name: "index_transactions_on_member_id"
   end
 
+  add_foreign_key "members", "groups"
+  add_foreign_key "settles", "members", column: "paid_for_id"
+  add_foreign_key "settles", "transactions"
+  add_foreign_key "transactions", "groups"
+  add_foreign_key "transactions", "members"
 end
