@@ -4,5 +4,6 @@ Rails.application.routes.draw do
     post '/inicialmembers', to: 'members#create'
     resources :transactions, only: [:create, :index]
     resources :debts, only: [:index]
+    resources :settle, only: [:create]
   end
 end
