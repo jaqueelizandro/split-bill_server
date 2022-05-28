@@ -1,8 +1,9 @@
 class Transaction < ApplicationRecord
     belongs_to :group
     belongs_to :member
+    has_one :settle
 
-    # validates :member_id, presence: true
+    # validates :kind, :amount, :date, :group_id, :member_id, presence: true
     
-    enum kind: { expense: 0, transfer: 1, income: 2 }
+    enum kind: { expense: 0, settle: 1, income: 2 }
 end
