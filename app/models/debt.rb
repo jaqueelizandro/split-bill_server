@@ -19,16 +19,16 @@ class Debt
         end
 
         how_much_each_member_has_to_pay_discounted = []
+
         how_much_each_member_has_to_pay.each do |each_member|
             found = false
-
             settle.each do |key, value|
-                if key[0] == each_member[:settle] && key[1] == each_member[:income]
+                if key[0] == each_member[:settle][:id] && key[1] == each_member[:income][:id]
                     found = true
                     remain_value = each_member[:amount] - value
                     if remain_value > 0
                         how_much_each_member_has_to_pay_discounted.push({
-                            settle: key[0],
+                            settle: members.find {|m| m[:id] == key[0]},
                             income: each_member[:income],
                             amount: remain_value
                         })
