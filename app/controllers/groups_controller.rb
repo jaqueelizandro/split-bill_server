@@ -2,7 +2,8 @@ class GroupsController < ApplicationController
 
     def show
         group = Group.find(params[:id])
-        render json: group, status: :created
+        # members = group.members
+        render json: group
     end
 
     def create

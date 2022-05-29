@@ -4,45 +4,22 @@ class DebtsController < ApplicationController
         group = Group.find(params[:group_id])
         members = group.members
         transactions = group.transactions
-        debt = Hash.new
-        credit = Hash.new
-        settle = Hash.new
 
-        _total = 0
-        transactions.each do |transaction|
-            if transaction.kind == 'expense'
-                _total += transaction.amount
-            end
-        end
-        _debt = _total / members.size
+        # # trans_amount_by_member = transactions.group(:member_id).sum('case when "transactions"."kind" = 0 then "transactions"."amount" else "transactions"."amount" * -1 end')
+        # income_by_member = transactions.group(:member_id).where(kind: :income).sum(:amount)
+        # expense_group = transactions.where(kind: :expense).sum(:amount)
+        # total_member = expense_group / members.length
+        # trans_amount_by_member = transactions.group(:member_id, :kind).sum(:amount)
+        # # {[38, "expense"]=>30, [38, "income"]=>10, [39, "expense"]=>154, [39, "settle"]=>10}
 
-        members.each do |member|
-            _total = 0
-            transactions.each do |transaction|
-                if member.id == transaction.member_id
-                    if transaction.kind == 'expense'
-                        _total += transaction.amount
-                    end
-                end
-            end
-            if ((_total - _debt) > 0)
-                credit[member.name] = (_total - _debt)
-            else 
-                debt[member.name] = (_total - _debt)
-            end
-        end
+        expense_by_member = transactions.group(:member_id).where(kind: :expense).sum(:amount)
+        # {38=>30, 39=>154}
 
-        puts debt
-        puts credit
-    
-        
-        
-        
-        
-        
-        
-        
-        
-        render json: transactions
+        settle_by_member = Transaction.joins(:settle).group(:member_id, :paid_for_id).sum(:amount)
+
+        debt = Debt.new
+        result = debt.calculate(expense_by_member, settle_by_member, members)
+
+        render json: result
     end
 end

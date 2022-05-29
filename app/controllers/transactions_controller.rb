@@ -21,6 +21,11 @@ class TransactionsController < ApplicationController
                 group = Group.find(params[:group_id])
                 group.transactions << trans_settle
 
+                settle = Settle.create!(
+                    paid_for_id: params[:paid_for],
+                    transaction_id: trans_settle.id
+                )
+
                 trans_income = Transaction.create!(
                     kind: 'income',
                     description: params[:description],
@@ -32,6 +37,7 @@ class TransactionsController < ApplicationController
                 )
                 group = Group.find(params[:group_id])
                 group.transactions << trans_income
+
             end
             # render json: [trans_expense, trans_income], status: :created
             # respond_to do |format|
