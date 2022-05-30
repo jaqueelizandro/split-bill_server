@@ -29,7 +29,7 @@ class Debts < ActiveSupport::TestCase
     result = debt.calculate({38=>30}, {[39, 38]=>5}, [{"id": 39}, {"id": 38}, {"id": 46}])
     expected = [{"settle": {"id": 46}, "income": {"id": 38}, "amount": 10},
                 {"settle": {"id": 39}, "income": {"id": 38}, "amount": 5}]
-    assert_equal(expected.sort{ |a, b| a[:settle] <=> b[:settle] }, result.sort{ |a, b| a[:settle] <=> b[:settle] })
+    assert_equal(expected.sort{ |a, b| a[:settle][:id] <=> b[:settle][:id] }, result.sort{ |a, b| a[:settle][:id] <=> b[:settle][:id] })
   end
 
   test "calculate two people paid for bills and one paid back" do 
@@ -38,7 +38,7 @@ class Debts < ActiveSupport::TestCase
     expected = [{"settle": {"id": 46}, "income": {"id": 38}, "amount": 10},
                 {"settle": {"id": 39}, "income": {"id": 46}, "amount": 20},
                 {"settle": {"id": 38}, "income": {"id": 46}, "amount": 20}]
-    assert_equal(expected.sort{ |a, b| a[:settle] <=> b[:settle] }, result.sort{ |a, b| a[:settle] <=> b[:settle] })
+    assert_equal(expected.sort{ |a, b| a[:settle][:id] <=> b[:settle][:id] }, result.sort{ |a, b| a[:settle][:id] <=> b[:settle][:id] })
   end
 
   test "calculate two people paid for bills and two paid back" do 
@@ -47,7 +47,7 @@ class Debts < ActiveSupport::TestCase
     expected = [{"settle": {"id": 46}, "income": {"id": 38}, "amount": 10},
                 {"settle": {"id": 39}, "income": {"id": 46}, "amount": 5},
                 {"settle": {"id": 38}, "income": {"id": 46}, "amount": 20}]
-    assert_equal(expected.sort{ |a, b| a[:settle] <=> b[:settle] }, result.sort{ |a, b| a[:settle] <=> b[:settle] })
+    assert_equal(expected.sort{ |a, b| a[:settle][:id] <=> b[:settle][:id] }, result.sort{ |a, b| a[:settle][:id] <=> b[:settle][:id] })
   end
 end
 
