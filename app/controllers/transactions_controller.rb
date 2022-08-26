@@ -19,8 +19,6 @@ class TransactionsController < ApplicationController
                     group_id: params[:group_id],
                     member_id: params[:who_paid]
                 )
-                group = Group.find(params[:group_id])
-                group.transactions << trans_settle
 
                 settle = Settle.create!(
                     paid_for_id: params[:paid_for],
@@ -36,8 +34,6 @@ class TransactionsController < ApplicationController
                     group_id: params[:group_id],
                     member_id: params[:paid_for]
                 )
-                group = Group.find(params[:group_id])
-                group.transactions << trans_income
             end
 
             head :created
