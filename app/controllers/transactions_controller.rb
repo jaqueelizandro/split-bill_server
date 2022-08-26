@@ -38,28 +38,23 @@ class TransactionsController < ApplicationController
                 )
                 group = Group.find(params[:group_id])
                 group.transactions << trans_income
-
             end
-            # render json: [trans_expense, trans_income], status: :created
-            # respond_to do |format|
-            #     format.json  { render :json => {:trans_expense => trans_expense, 
-            #                                     :trans_income => trans_income }}
-            #   end
-        else
-        transaction = Transaction.create!(
-            kind: params[:kind],
-            description: params[:description],
-            amount: params[:amount],
-            date: params[:date],
-            image: params[:image],
-            group_id: params[:group_id],
-            member_id: params[:member_id]
-        )
-        group = Group.find(params[:group_id])
-        group.transactions << transaction
-        transactions = group.transactions
 
-        render json: transactions, status: :created
+            head :created
+        else
+            transaction = Transaction.create!(
+                kind: params[:kind],
+                description: params[:description],
+                amount: params[:amount],
+                date: params[:date],
+                image: params[:image],
+                group_id: params[:group_id],
+                member_id: params[:member_id]
+            )
+            group = Group.find(params[:group_id])
+            transactions = group.transactions
+
+            render json: transactions, status: :created
         end
     end
 
