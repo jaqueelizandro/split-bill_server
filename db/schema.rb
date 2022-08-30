@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_31_112450) do
+ActiveRecord::Schema.define(version: 2022_08_30_072111) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -36,6 +36,8 @@ ActiveRecord::Schema.define(version: 2022_05_31_112450) do
     t.bigint "paid_for_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "income_id"
+    t.index ["income_id"], name: "index_settles_on_income_id"
     t.index ["paid_for_id"], name: "index_settles_on_paid_for_id"
     t.index ["transaction_id"], name: "index_settles_on_transaction_id"
   end
@@ -57,6 +59,7 @@ ActiveRecord::Schema.define(version: 2022_05_31_112450) do
   add_foreign_key "members", "groups"
   add_foreign_key "settles", "members", column: "paid_for_id"
   add_foreign_key "settles", "transactions"
+  add_foreign_key "settles", "transactions", column: "income_id"
   add_foreign_key "transactions", "groups"
   add_foreign_key "transactions", "members"
 end
