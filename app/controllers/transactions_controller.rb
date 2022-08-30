@@ -20,11 +20,6 @@ class TransactionsController < ApplicationController
                     member_id: params[:who_paid]
                 )
 
-                settle = Settle.create!(
-                    paid_for_id: params[:paid_for],
-                    transaction_id: trans_settle.id
-                )
-
                 trans_income = Transaction.create!(
                     kind: 'income',
                     description: params[:description],
@@ -33,6 +28,12 @@ class TransactionsController < ApplicationController
                     image: params[:image],
                     group_id: params[:group_id],
                     member_id: params[:paid_for]
+                )
+
+                settle = Settle.create!(
+                    paid_for_id: params[:paid_for],
+                    transaction_id: trans_settle.id,
+                    income_id: trans_income.id
                 )
             end
 
@@ -66,14 +67,22 @@ class TransactionsController < ApplicationController
             group_id: params[:group_id],
             member_id: params[:member_id]
         )
+
         render json: transaction, status: :created
     end
 
     def destroy
-        group = Group.find(params[:group_id])
-        transaction = group.transactions.find(params[:id])
-        transaction.destroy!
-        render json: transaction, status: :no_content
+        if params[:kind] == 'settle' || params[:kind] == 'income'
+            ActiveRecord::Base.transaction do
+                group = Group.find(params[:group_id])
+                transaction = group.transactions.find(params[:id])
+
+                transaction.settle.destroy!
+                transaction.destroy!
+            end
+        end
+
+        head :no_content
     end
 
 end
