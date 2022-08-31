@@ -72,14 +72,28 @@ class TransactionsController < ApplicationController
     end
 
     def destroy
-        if params[:kind] == 'settle' || params[:kind] == 'income'
+        group = Group.find(params[:group_id])
+        transaction = group.transactions.find(params[:id])
+        if params[:kind] == 'income'
             ActiveRecord::Base.transaction do
-                group = Group.find(params[:group_id])
-                transaction = group.transactions.find(params[:id])
+                settle = Settle.find_by income_id: transaction
+                trans_settle = group.transactions.find_by id: settle.transaction_id 
 
-                transaction.settle.destroy!
+                settle.destroy!
                 transaction.destroy!
+                trans_settle.destroy!
             end
+        elsif params[:kind] == 'settle'
+            ActiveRecord::Base.transaction do
+                settle = Settle.find_by income_id: transaction
+                trans_income = group.transactions.find_by id: settle.transaction_id 
+
+                settle.destroy!
+                transaction.destroy!
+                trans_income.destroy!
+            end
+        else
+            transaction.destroy!
         end
 
         head :no_content
